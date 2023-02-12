@@ -4,6 +4,7 @@ import json
 from .constants import PaymentStatus
 from django.views.decorators.csrf import csrf_exempt
 from portal.models import Order
+from RazorPayment.settings import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
 # Create your views here.
 
 
@@ -15,7 +16,7 @@ def order_payment(request):
     if request.method == "POST":
         name = request.POST.get("name")
         amount = request.POST.get("amount")
-        client = razorpay.Client(auth=("rzp_test_BBx5TcJL1kgzp9", "OzTAcAZ3nrNlzubkyMxIS3Tg"))
+        client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
         DATA = {
             "amount": int(amount)*100,
@@ -59,7 +60,7 @@ def order_payment(request):
 @csrf_exempt
 def callback(request):
     def verify_signature(response_data):
-        client = razorpay.Client(auth=("rzp_test_BBx5TcJL1kgzp9", "OzTAcAZ3nrNlzubkyMxIS3Tg"))
+        client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
         return client.utility.verify_payment_signature(response_data)
 
     if "razorpay_signature" in request.POST:
